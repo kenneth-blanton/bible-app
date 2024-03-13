@@ -93,6 +93,23 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "version": 2
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "bible-app:build:production",
+              "serveTarget": "bible-app:serve:production"
+            },
+            "development": {
+              "buildTarget": "bible-app:build:development",
+              "serveTarget": "bible-app:serve:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

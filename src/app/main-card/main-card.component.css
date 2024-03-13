@@ -1,0 +1,50 @@
+.card {
+  margin: 2em auto;
+  background-color: #fbfaee;
+  max-width: 600px;
+  border-radius: 4px;
+  padding: 1em;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.card p {
+  color: #423910;
+  font-family: Arial, sans-serif;
+  font-size: 1.25em;
+  line-height: 1.5em;
+}
+
+.cardVerse {
+  color: #423910;
+  font-family: Arial, sans-serif;
+  font-size: 1.75em;
+  font-weight: 600;
+}
+
+.cardReference {
+  color: #423910;
+  font-family: Arial, sans-serif;
+  font-size: 1.25em;
+  font-style: italic;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1em;
+}
+
+.cardFooter button {
+  background-color: #3a4e0f;
+  color: #fbfaee;
+  font-family: Arial, sans-serif;
+  font-size: 1em;
+  padding: 0.5em 1em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

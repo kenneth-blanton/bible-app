@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "ai-bible-buddy"
+  },
+  "targets": {
+    "ai-bible-buddy": {
+      "hosting": {
+        "bible-app": [
+          "ai-bible-buddy"
+        ]
+      }
+    }
+  }
+}
