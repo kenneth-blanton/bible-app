@@ -1,12 +1,14 @@
-<div class="card" *ngIf="KJV$ | async as KJV">
+<div class="card">
   <div class="cardVerse">
-    {{ KJV.content }}
+    {{ verseDocument.content }}
   </div>
-  <div class="cardReference">- {{ KJV.reference }}</div>
+  <div class="cardReference">- {{ verseDocument.reference }}</div>
   <hr />
   <div class="cardFooter">
     <div>
-      <button>Read {{ KJV.reference.toString().split(":")[0] }}</button>
+      <button>
+        Read {{ verseDocument.reference.toString().split(":")[0] }}
+      </button>
     </div>
     <div>
       <button>Share</button>

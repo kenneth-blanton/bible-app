@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { VerseDocument } from '../home/home.component';
 
 @Component({
   selector: 'app-card',
@@ -9,15 +10,8 @@ import { Component } from '@angular/core';
   styleUrl: './card.component.css',
 })
 export class CardComponent {
-  homeCards = [
-    // {},
-    {
-      title: 'Summarization',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    },
-    {
-      title: 'Prayer',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    },
-  ];
+  @Input() verseDocument!: string;
+  @Input() title!: string;
+
+  constructor() {}
 }

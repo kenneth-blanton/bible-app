@@ -1,2 +1,5 @@
-<app-main-card></app-main-card>
-<!-- <app-card></app-card> -->
+<div *ngIf="verse$ | async as verse">
+  <app-main-card [verseDocument]="verse"></app-main-card>
+  <app-card [verseDocument]="verse.summary" title="Summary"></app-card>
+  <app-card [verseDocument]="verse.prayer" title="Prayer"></app-card>
+</div>

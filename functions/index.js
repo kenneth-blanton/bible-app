@@ -7,6 +7,10 @@ const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
 const { onSchedule } = require("firebase-functions/v2/scheduler");
+const { log } = require("console");
+const { TextEncoder, TextDecoder } = require("util");
+
+const { GoogleAuth } = require("google-auth-library");
 
 initializeApp();
 
@@ -16,7 +20,11 @@ initializeApp();
 // Save the data to Firestore
 
 const key = process.env.BIBLE_API_KEY;
-const bibles = { KJV: "de4e12af7f28f599-02", ASV: "06125adad2d5898a-01" };
+const bibles = {
+  KJV: "de4e12af7f28f599-02",
+  ASV: "06125adad2d5898a-01",
+  GNV: "c315fa9f71d4af3a-01",
+};
 
 const VERSES = [
   `1CO.4.4-1CO.4.8`,
@@ -81,7 +89,7 @@ async function fetchVerses(bibleName) {
   // handle errors of course
   let bibleID = bibles[bibleName];
   let response = await fetch(
-    `https://api.scripture.api.bible/v1/bibles/${bibleID}/passages/${verseID}?content-type=text&include-notes=true&include-titles=false&include-chapter-numbers=false&include-verse-numbers=false&include-verse-spans=false&use-org-id=false`,
+    `https://api.scripture.api.bible/v1/bibles/${bibleID}/passages/${verseID}?content-type=text&include-notes=false&include-titles=false&include-chapter-numbers=false&include-verse-numbers=false&include-verse-spans=false&use-org-id=false`,
     {
       headers: {
         "api-key": key,
@@ -90,10 +98,62 @@ async function fetchVerses(bibleName) {
   );
   let { data } = await response.json();
 
-  data.content = data.content.trim();
+  data.content = data.content.trim().replace(/¶/g, "");
   data.currentDate = new Date();
+  data.summary = await makeSummary(data.content);
+  data.prayer = await makePrayer(data.content);
 
   await getFirestore().collection("versesOfTheDay").doc(bibleName).set(data);
+}
+
+async function makeSummary(content) {
+  const auth = new GoogleAuth();
+  const token = await auth.getAccessToken();
+
+  let response = await fetch(
+    "https://us-central1-aiplatform.googleapis.com/v1/projects/ai-bible-buddy/locations/us-central1/publishers/google/models/text-bison:predict",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        instances: [{ prompt: "Summarize this verse: " + content }],
+      }),
+    }
+  );
+
+  const summary = await response.json();
+  return summary.predictions[0].content.trim();
+}
+
+async function makePrayer(content) {
+  const auth = new GoogleAuth();
+  const token = await auth.getAccessToken();
+
+  let response = await fetch(
+    "https://us-central1-aiplatform.googleapis.com/v1/projects/ai-bible-buddy/locations/us-central1/publishers/google/models/text-bison:predict",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        instances: [
+          {
+            prompt:
+              "Make a prayer for this bible verse that can be applicable in daily life: " +
+              content,
+          },
+        ],
+      }),
+    }
+  );
+
+  const prayer = await response.json();
+  return prayer.predictions[0].content.trim();
 }
 
 exports.verseOfTheDay = onSchedule("0 0 * * *", async () => {
